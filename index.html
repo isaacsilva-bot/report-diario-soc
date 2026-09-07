@@ -171,7 +171,7 @@
     </div>
   </div>
   <div class="ftr">
-    <span>Gerado em <b id="fts">--</b></span>
+    <span>Gerado em <b id="fts">--</b> &bull; Atualiza a cada 5min</span>
     <span>Dados: Google Sheets &bull; SOC RJ02</span>
   </div>
 </div>
@@ -249,10 +249,14 @@ function render(d){
   document.getElementById('aBody').innerHTML=tb;
   document.getElementById('fts').textContent=now.toLocaleDateString('pt-BR')+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
-(async()=>{
+async function refresh(){
   let d;try{const r=await fetchData();d=proc(r)}catch(e){}
   if(!d)d=ED;render(d);
+}
+(async()=>{
+  await refresh();
   setTimeout(()=>{document.getElementById('ld').classList.add('hide');const rpt=document.getElementById('rpt');rpt.style.opacity='1';rpt.style.transition='opacity .4s'},400);
+  setInterval(refresh,5*60*1000);
 })();
 </script>
 </body>
