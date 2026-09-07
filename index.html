@@ -170,6 +170,14 @@
       </table>
     </div>
   </div>
+
+  <!-- PERFORMANCE -->
+  <div style="padding:10px 18px 8px;border-bottom:1px solid var(--g200);">
+    <div class="sec-title"><span class="dot"></span>Performance (Coluna L)</div>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;" id="perfBars"></div>
+  </div>
+
+  <!-- FOOTER -->
   <div class="ftr">
     <span>Gerado em <b id="fts">--</b> &bull; Atualiza a cada 5min</span>
     <span>Dados: Google Sheets &bull; SOC RJ02</span>
@@ -184,7 +192,7 @@ async function fetchData(){
   }catch(e){return null;}
 }
 function parseCSV(c){const L=[];let cur='',q=false;for(let i=0;i<c.length;i++){const ch=c[i];if(ch==='"'){if(q&&c[i+1]==='"'){cur+='"';i++}else q=!q}else if(ch===','&&!q){L.length?L[L.length-1].push(cur):L.push([cur]);cur=''}else if((ch==='\n'||ch==='\r')&&!q){if(cur||L.length&&L[L.length-1].length){L.length?L[L.length-1].push(cur):L.push([cur]);cur='';L.push([])}if(ch==='\r'&&c[i+1]==='\n')i++}else cur+=ch}if(cur){L.length?L[L.length-1].push(cur):L.push([cur])}return L.filter(r=>r.length>1||(r.length===1&&r[0]!==''));}
-const ED={date:'2026-09-07',totalTasks:2918,statuses:{'Disabled':672,'Nenhum pacote coletado':904,'Accepted':411,'NA':105,'Done':482,'Pickup Start':216,'Completed':128},noShowSeller:1311,totalQty:119071,analysts:[
+const ED={date:'2026-09-07',totalTasks:2918,statuses:{'Disabled':672,'Nenhum pacote coletado':904,'Accepted':411,'NA':105,'Done':482,'Pickup Start':216,'Completed':128},performance:{'Sem Performance':1596,'No Show Seller':1311,'No Show 3PL':11},noShowSeller:1311,totalQty:119071,analysts:[
 {name:'Juliana Bastos',total:519,done:24,pickup:45,completed:34,accepted:22,disabled:146,nenhum:248,noShow:305,qty:34771},
 {name:'Isaac Maia',total:460,done:42,pickup:45,completed:40,accepted:81,disabled:93,nenhum:76,noShow:123,qty:15414},
 {name:'Rafaela Pacheco',total:394,done:107,pickup:24,completed:2,accepted:61,disabled:71,nenhum:129,noShow:191,qty:14760},
@@ -203,15 +211,16 @@ function proc(rows){
   const h=rows[0],d=rows.slice(1);
   const iD=h.findIndex(x=>x.includes('Data')),iS=h.findIndex(x=>x.includes('Status')),iQ=h.findIndex(x=>x.includes('Quantidade')),iP=h.findIndex(x=>x.includes('Performance')),iA=h.findIndex(x=>x.includes('Analista'));
   if(iS<0)return null;
-  const st={};let tQ=0,ns=0;const an={};let dt='';
+  const st={};let tQ=0,ns=0;const an={};let dt='';const pf={};
   for(const r of d){if(!r||r.length<2)continue;const s=(r[iS]||'').trim(),q=parseInt(r[iQ]||'0')||0,p=(r[iP]||'').trim(),a=(r[iA]||'').trim()||'(sem analista)';
+    const pk=p||'Sem Performance';pf[pk]=(pf[pk]||0)+1;
     if(!dt&&iD>=0)dt=(r[iD]||'').trim();if(s)st[s]=(st[s]||0)+1;tQ+=q;if(p==='No Show Seller')ns++;
     if(!an[a])an[a]={name:a,total:0,done:0,pickup:0,completed:0,accepted:0,disabled:0,nenhum:0,noShow:0,qty:0};
     const o=an[a];o.total++;o.qty+=q;
     if(s==='Done')o.done++;else if(s==='Pickup Start')o.pickup++;else if(s==='Completed')o.completed++;else if(s==='Accepted')o.accepted++;else if(s==='Disabled')o.disabled++;else if(s==='Nenhum pacote coletado')o.nenhum++;
     if(p==='No Show Seller')o.noShow++;}
   const list=Object.values(an);list.forEach(a=>{if(a.name==='(sem analista)')a.name='Sem Analista';});
-  return{date:dt||new Date().toISOString().slice(0,10),totalTasks:d.length,statuses:st,noShowSeller:ns,totalQty:tQ,analysts:list.sort((a,b)=>b.total-a.total)};
+  return{date:dt||new Date().toISOString().slice(0,10),totalTasks:d.length,statuses:st,performance:pf,noShowSeller:ns,totalQty:tQ,analysts:list.sort((a,b)=>b.total-a.total)};
 }
 function render(d){
   const dt=new Date(d.date+'T12:00:00');
@@ -247,6 +256,17 @@ function render(d){
   }
   tb+=`<tr class="tot"><td>TOTAL</td><td><span class="pill">${T.total}</span></td><td>${T.done}</td><td>${T.pickup}</td><td>${T.accepted}</td><td>${T.disabled}</td><td>${T.nenhum}</td><td>${T.noShow}</td><td class="qty">${fmt(T.qty)}</td></tr>`;
   document.getElementById('aBody').innerHTML=tb;
+
+  // Performance bars
+  const perfColors={'No Show Seller':'#ef4444','No Show 3PL':'#f59e0b','Sem Performance':'#9ca3af'};
+  const perfEntries=Object.entries(d.performance||{}).sort((a,b)=>b[1]-a[1]);
+  const perfTotal=perfEntries.reduce((s,e)=>s+e[1],0);
+  document.getElementById('perfBars').innerHTML=perfEntries.map(([k,v])=>{
+    const pct=(v/perfTotal*100).toFixed(1);
+    const c=perfColors[k]||'#6b7280';
+    return`<div style="flex:1;min-width:120px;"><div style="display:flex;justify-content:space-between;margin-bottom:3px;"><span style="font-size:9px;font-weight:700;color:var(--g700)">${k}</span><span style="font-size:9px;font-weight:800;color:${c}">${v} (${pct}%)</span></div><div style="height:10px;background:var(--g100);border-radius:5px;overflow:hidden;"><div style="height:100%;width:${pct}%;background:${c};border-radius:5px;"></div></div></div>`;
+  }).join('');
+
   document.getElementById('fts').textContent=now.toLocaleDateString('pt-BR')+' '+now.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
 async function refresh(){
