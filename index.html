@@ -196,7 +196,8 @@ const ED={date:'2026-09-07',totalTasks:2846,statuses:{'Accepted':874,'Nenhum pac
 {name:'Cristiane Amorim',total:152,done:19,pickup:11,completed:0,accepted:27,disabled:36,nenhum:59,noShow:75,qty:2962},
 {name:'Jefferson Nascimento',total:121,done:30,pickup:6,completed:0,accepted:47,disabled:28,nenhum:10,noShow:39,qty:2136},
 {name:'Motorista de Apoio',total:77,done:6,pickup:26,completed:0,accepted:21,disabled:14,nenhum:10,noShow:11,qty:7141},
-{name:'Diego Oliveira',total:27,done:0,pickup:14,completed:0,accepted:3,disabled:0,nenhum:0,noShow:0,qty:2901}]};
+{name:'Diego Oliveira',total:27,done:0,pickup:14,completed:0,accepted:3,disabled:0,nenhum:0,noShow:0,qty:2901},
+{name:'Sem Analista',total:19,done:9,pickup:0,completed:0,accepted:6,disabled:4,nenhum:0,noShow:6,qty:543}]};
 function proc(rows){
   if(!rows||rows.length<2)return null;
   const h=rows[0],d=rows.slice(1);
@@ -209,7 +210,8 @@ function proc(rows){
     const o=an[a];o.total++;o.qty+=q;
     if(s==='Done')o.done++;else if(s==='Pickup Start')o.pickup++;else if(s==='Completed')o.completed++;else if(s==='Accepted')o.accepted++;else if(s==='Disabled')o.disabled++;else if(s==='Nenhum pacote coletado')o.nenhum++;
     if(p==='No Show Seller')o.noShow++;}
-  return{date:dt||new Date().toISOString().slice(0,10),totalTasks:d.length,statuses:st,noShowSeller:ns,totalQty:tQ,analysts:Object.values(an).filter(a=>a.name!=='(sem analista)').sort((a,b)=>b.total-a.total)};
+  const list=Object.values(an);list.forEach(a=>{if(a.name==='(sem analista)')a.name='Sem Analista';});
+  return{date:dt||new Date().toISOString().slice(0,10),totalTasks:d.length,statuses:st,noShowSeller:ns,totalQty:tQ,analysts:list.sort((a,b)=>b.total-a.total)};
 }
 function render(d){
   const dt=new Date(d.date+'T12:00:00');
