@@ -13,13 +13,7 @@
     --g500:#6b7280;--g600:#4b5563;--g700:#374151;--g800:#1f2937;--g900:#111827;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
-  body{
-    font-family:'Inter',system-ui,sans-serif;
-    background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
-    min-height:100vh;
-    display:flex;align-items:flex-start;justify-content:center;
-    padding:16px;
-  }
+  body{font-family:'Inter',system-ui,sans-serif;background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:16px;}
   .card{width:100%;max-width:880px;background:rgba(255,255,255,0.94);backdrop-filter:blur(24px);border-radius:20px;box-shadow:0 12px 48px rgba(0,0,0,0.18);overflow:hidden;}
   .hdr{background:linear-gradient(135deg,var(--o500),var(--o600),var(--o700));color:#fff;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden;}
   .hdr::before{content:'';position:absolute;top:-60%;right:-15%;width:260px;height:260px;background:rgba(255,255,255,0.07);border-radius:50%;}
@@ -125,20 +119,21 @@ async function fetchData(){
   }catch(e){return null;}
 }
 function parseCSV(c){const L=[];let cur='',q=false;for(let i=0;i<c.length;i++){const ch=c[i];if(ch==='"'){if(q&&c[i+1]==='"'){cur+='"';i++}else q=!q}else if(ch===','&&!q){L.length?L[L.length-1].push(cur):L.push([cur]);cur=''}else if((ch==='\n'||ch==='\r')&&!q){if(cur||L.length&&L[L.length-1].length){L.length?L[L.length-1].push(cur):L.push([cur]);cur='';L.push([])}if(ch==='\r'&&c[i+1]==='\n')i++}else cur+=ch}if(cur){L.length?L[L.length-1].push(cur):L.push([cur])}return L.filter(r=>r.length>1||(r.length===1&&r[0]!==''));}
-const ED={date:'2026-09-07',totalTasks:2938,statuses:{'Disabled':739,'Done':535,'Nenhum pacote coletado':959,'Accepted':243,'NA':105,'Pickup Start':187,'Completed':170},performance:{'Sem Performance':1475,'No Show Seller':1451,'No Show 3PL':12},noShowSeller:1451,totalQty:134702,analysts:[
-{name:'Juliana Bastos',total:514,done:26,pickup:55,completed:34,accepted:7,disabled:145,nenhum:247,noShow:308,qty:40218},
-{name:'Isaac Maia',total:461,done:69,pickup:39,completed:40,accepted:62,disabled:88,nenhum:80,noShow:157,qty:21798},
-{name:'Rafaela Pacheco',total:401,done:109,pickup:25,completed:9,accepted:46,disabled:78,nenhum:134,noShow:210,qty:16455},
-{name:'Nathalie Lisboa',total:248,done:38,pickup:2,completed:7,accepted:25,disabled:81,nenhum:95,noShow:127,qty:4374},
-{name:'Joelson Vieira',total:227,done:47,pickup:0,completed:15,accepted:16,disabled:67,nenhum:82,noShow:124,qty:7929},
-{name:'Igor Rodrigues',total:227,done:48,pickup:4,completed:10,accepted:7,disabled:71,nenhum:87,noShow:115,qty:7011},
-{name:'Rafael Alves',total:202,done:92,pickup:6,completed:5,accepted:12,disabled:31,nenhum:44,noShow:95,qty:7389},
-{name:'Driele Pilar',total:189,done:27,pickup:9,completed:11,accepted:21,disabled:61,nenhum:60,noShow:78,qty:5391},
-{name:'Cristiane Amorim',total:153,done:25,pickup:0,completed:8,accepted:0,disabled:51,nenhum:69,noShow:90,qty:3968},
-{name:'Motorista de Apoio',total:146,done:33,pickup:16,completed:0,accepted:27,disabled:30,nenhum:40,noShow:71,qty:11168},
-{name:'Jefferson Nascimento',total:123,done:9,pickup:16,completed:31,accepted:15,disabled:31,nenhum:21,noShow:62,qty:3632},
-{name:'Diego Oliveira',total:27,done:0,pickup:15,completed:0,accepted:2,disabled:0,nenhum:0,noShow:6,qty:4667},
-{name:'Sem Analista',total:20,done:12,pickup:0,completed:0,accepted:3,disabled:5,nenhum:0,noShow:8,qty:702}]};
+const ED={date:'2026-09-09',totalTasks:4514,statuses:{'Accepted':4393,'NA':92,'Pickup Start':29},performance:{'Sem Performance':4514},noShowSeller:0,totalQty:501,analysts:[
+{name:'Juliana Bastos',total:883,done:0,pickup:0,completed:0,accepted:883,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'Rafaela Pacheco',total:652,done:0,pickup:0,completed:0,accepted:632,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'Isaac Maia',total:629,done:0,pickup:17,completed:0,accepted:600,disabled:0,nenhum:0,noShow:0,qty:221},
+{name:'Nathalie Lisboa',total:441,done:0,pickup:12,completed:0,accepted:429,disabled:0,nenhum:0,noShow:0,qty:280},
+{name:'Igor Rodrigues',total:332,done:0,pickup:0,completed:0,accepted:332,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'Joelson Vieira',total:320,done:0,pickup:0,completed:0,accepted:320,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'Rafael Alves',total:296,done:0,pickup:0,completed:0,accepted:284,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'Driele Pilar',total:295,done:0,pickup:0,completed:0,accepted:295,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'Jefferson Nascimento',total:204,done:0,pickup:0,completed:0,accepted:204,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'Motorista de Apoio',total:181,done:0,pickup:0,completed:0,accepted:181,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'Cristiane Amorim',total:147,done:0,pickup:0,completed:0,accepted:147,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'Sem Analista',total:115,done:0,pickup:0,completed:0,accepted:67,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'Diego Oliveira',total:16,done:0,pickup:0,completed:0,accepted:16,disabled:0,nenhum:0,noShow:0,qty:0},
+{name:'BIG',total:3,done:0,pickup:0,completed:0,accepted:3,disabled:0,nenhum:0,noShow:0,qty:0}]};
 function proc(rows){
   if(!rows||rows.length<2)return null;
   const h=rows[0],d=rows.slice(1);
